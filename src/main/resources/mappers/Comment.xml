@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.hs.dgsw.notice_back.Domain.CommentMapper">
+
+    <insert id="add" parameterType="kr.hs.dgsw.notice_back.Domain.Comment">
+        insert into comment(user_id, post_id, content)
+        values (#{userId}, #{postId}, #{content})
+        <selectKey keyProperty="id" resultType="Long">
+            select last_insert_id()
+        </selectKey>
+    </insert>
+
+    <update id="modify" parameterType="kr.hs.dgsw.notice_back.Domain.Comment">
+        update comment set user_id=#{user_id}, post_id=#{post_id},
+            content=#{content}
+          where id=#{id}
+    </update>
+
+    <select id="findById" parameterType="Long"
+            resultType="kr.hs.dgsw.notice_back.Domain.Comment">
+        select id, post_id as postId, content, user_id as userId, created, updated
+        from comment
+        where id=#{id}
+    </select>
+
+    <delete id="deleteById" parameterType="Long">
+        delete from comment where id=#{id}
+    </delete>
+
+    <select id="findAll" resultType="HashMap">
+        select id, post_id as postId, content, user_id as userId, created, updated
+        from comment
+    </select>
+
+    <select id="findByUserId" parameterType="Long"
+            resultType="HashMap">
+        select c.id, c.post_id as postId, content, user_id as c.userId,
+                  c.created, c.updated
+        from comment c left join user u on c.user_id = u.id
+        where c.user_id = #{userId}
+    </select>
+
+    <select id="findByPostId" parameterType="Long"
+            resultType="HashMap">
+        select c.id, c.post_id as postId, c.content, c.user_id as userId, u.nickname,
+                  c.created, c.updated
+        from comment c left join post p on c.post_id = p.id
+                       left join user u on c.user_id = u.id
+        where c.post_id = #{postId}
+    </select>
+</mapper>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.hs.dgsw.notice_back.Domain.AttachMapper">
+
+    <select id="findById" parameterType="Long" resultType="HashMap">
+        select a.id, a.filename, a.filepath
+        from attach a left join post p on a.post_id = p.id
+        where a.id=#{id}
+    </select>
+
+    <insert id="add" parameterType="kr.hs.dgsw.notice_back.Domain.Attach">
+        insert into attach(post_id, filename, filepath)
+        values(#{postId}, #{filename}, #{filepath})
+        <selectKey keyProperty="id" resultType="Long">
+            select last_insert_id()
+        </selectKey>
+    </insert>
+
+    <update id="modify" parameterType="kr.hs.dgsw.notice_back.Domain.Attach">
+        update attach
+        set filename=#{filename}, filepath=#{filepath}
+        where id=#{id}
+    </update>
+
+    <delete id="deleteById" parameterType="Long">
+        delete from attach where id=#{id}
+    </delete>
+</mapper>
